@@ -1,0 +1,11 @@
+F:\Coding\ITHSLabbar\CV\Common\bin\Debug\net8.0\Common.deps.json
+F:\Coding\ITHSLabbar\CV\Common\bin\Debug\net8.0\Common.dll
+F:\Coding\ITHSLabbar\CV\Common\bin\Debug\net8.0\Common.pdb
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.GeneratedMSBuildEditorConfig.editorconfig
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.AssemblyInfoInputs.cache
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.AssemblyInfo.cs
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.csproj.CoreCompileInputs.cache
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.dll
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\refint\Common.dll
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.pdb
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\ref\Common.dll
