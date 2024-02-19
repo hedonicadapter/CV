@@ -285,3 +285,4 @@ F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\refint\WebAPI.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\WebAPI.pdb
 F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\WebAPI.genruntimeconfig.cache
 F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\ref\WebAPI.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\WebAPI.sourcelink.json

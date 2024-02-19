@@ -4,25 +4,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using DataAccess.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AdminContext>(options =>
-    options.UseSqlite("Data Source=./CV.db"));
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-    .AddEntityFrameworkStores<AdminContext>();
+// builder.Services.AddDbContext<AdminContext>(options =>
+//         options.UseSqlite("Data Source=../DataAccess/CV.db"));
 
-builder.Services.AddCascadingAuthenticationState();
-
-builder.Services.AddDbContext<ResumeContext>(options =>
-{
-    options.UseSqlite("Data Source=./CV.db");
-    options.EnableSensitiveDataLogging();
-});
+// builder.Services.AddDbContext<ResumeContext>(options =>
+// {
+//     options.UseSqlite("Data Source=../DataAccess/CV.db");
+//     options.EnableSensitiveDataLogging();
+// });
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -45,44 +41,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// var summaries = new[]
+
+// app.MapGet("api/resume", async (ResumeContext context) =>
 // {
-//     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-// };
+//     try
+//     {
+//         var resume = await context.Resumes
+//         .Include(r => r.Educations)
+//         .Include(r => r.Projects)
+//         .Include(r => r.Experiences)
+//         .FirstOrDefaultAsync();
 
-// app.MapGet("/weatherforecast", () =>
-// {
-//     var forecast =  Enumerable.Range(1, 5).Select(index =>
-//         new WeatherForecast
-//         (
-//             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-//             Random.Shared.Next(-20, 55),
-//             summaries[Random.Shared.Next(summaries.Length)]
-//         ))
-//         .ToArray();
-//     return forecast;
-// })
-// .WithName("GetWeatherForecast")
-// .WithOpenApi();
+//         return resume == null ? Results.NotFound() : Results.Ok(resume);
+//     }
+//     catch (Exception ex)
+//     {
+//         return Results.BadRequest(ex.Message);
+//     }
 
-app.MapGet("api/resume", async (ResumeContext context) =>
-{
-    try
-    {
-        var resume = await context.Resumes
-        .Include(r => r.Educations)
-        .Include(r => r.Projects)
-        .Include(r => r.Experiences)
-        .FirstOrDefaultAsync();
-
-        return resume == null ? Results.NotFound() : Results.Ok(resume);
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(ex.Message);
-    }
-
-}).WithName("GetResumes").WithOpenApi();
+// }).WithName("GetResumes").WithOpenApi();
 
 
 app.MapGet("/secure", [Authorize] () => "Secure data")
@@ -90,7 +67,3 @@ app.MapGet("/secure", [Authorize] () => "Secure data")
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

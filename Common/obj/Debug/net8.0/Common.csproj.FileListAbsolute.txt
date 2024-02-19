@@ -9,3 +9,4 @@ F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.dll
 F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\refint\Common.dll
 F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.pdb
 F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\ref\Common.dll
+F:\Coding\ITHSLabbar\CV\Common\obj\Debug\net8.0\Common.sourcelink.json

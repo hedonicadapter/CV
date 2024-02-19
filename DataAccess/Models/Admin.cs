@@ -1,6 +1,8 @@
-﻿namespace DataAccess.Models;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class Admin
+namespace DataAccess.Models;
+
+public class Admin : IdentityUser
 {
 
 }
