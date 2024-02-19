@@ -9,14 +9,11 @@ using DataAccess.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// builder.Services.AddDbContext<AdminContext>(options =>
-//         options.UseSqlite("Data Source=../DataAccess/CV.db"));
-
-// builder.Services.AddDbContext<ResumeContext>(options =>
-// {
-//     options.UseSqlite("Data Source=../DataAccess/CV.db");
-//     options.EnableSensitiveDataLogging();
-// });
+builder.Services.AddDbContext<CVContext>(options =>
+{
+    options.UseSqlite("Data Source=../DataAccess/CV.db");
+    options.EnableSensitiveDataLogging();
+});
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -25,12 +22,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// builder.Services.AddCascadingAuthenticationState();
-
 var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -42,28 +34,70 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-// app.MapGet("api/resume", async (ResumeContext context) =>
-// {
-//     try
-//     {
-//         var resume = await context.Resumes
-//         .Include(r => r.Educations)
-//         .Include(r => r.Projects)
-//         .Include(r => r.Experiences)
-//         .FirstOrDefaultAsync();
+app.MapGet("api/resume", async (CVContext context) =>
+{
+    try
+    {
+        var resume = await context.Resumes
+        .Include(r => r.Educations)
+        .Include(r => r.Projects)
+        .Include(r => r.Experiences)
+        .FirstOrDefaultAsync();
 
-//         return resume == null ? Results.NotFound() : Results.Ok(resume);
-//     }
-//     catch (Exception ex)
-//     {
-//         return Results.BadRequest(ex.Message);
-//     }
+        return resume == null ? Results.NotFound() : Results.Ok(resume);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
 
-// }).WithName("GetResumes").WithOpenApi();
+}).WithName("GetResume").WithOpenApi();
+
+app.MapPost("api/resume", async (CVContext context, Resume resume) =>
+{
+    try
+    {
+        if (context.Resumes.Any(r => r.Id == resume.Id))
+        {
+            context.Resumes.Update(resume);
+        }
+        else
+        {
+            context.Resumes.Add(resume);
+        }
+
+        await context.SaveChangesAsync();
+        return Results.Created($"/api/resume/{resume.Id}", resume);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("PostResume").WithOpenApi();
+
+app.MapDelete("api/resume/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var resume = await context.Resumes.FindAsync(id);
+        if (resume == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.Resumes.Remove(resume);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteResume").WithOpenApi();
 
 
-app.MapGet("/secure", [Authorize] () => "Secure data")
-   .RequireAuthorization();
+// app.MapGet("/secure", [Authorize] () => "Secure data")
+//    .RequireAuthorization();
 
 app.Run();
 
