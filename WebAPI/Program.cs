@@ -53,6 +53,20 @@ app.MapGet("api/resume", async (CVContext context) =>
 
 }).WithName("GetResume").WithOpenApi();
 
+app.MapPut("api/resume", async (CVContext context, Resume resume) =>
+{
+    try
+    {
+        context.Resumes.Update(resume);
+        await context.SaveChangesAsync();
+        return Results.Ok(resume);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("PutResume").WithOpenApi();
+
 app.MapPost("api/resume", async (CVContext context, Resume resume) =>
 {
     try
@@ -94,6 +108,67 @@ app.MapDelete("api/resume/{id}", async (CVContext context, int id) =>
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteResume").WithOpenApi();
+
+app.MapDelete("api/Experience/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var Experience = await context.Experiences.FindAsync(id);
+        if (Experience == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.Experiences.Remove(Experience);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteExperience").WithOpenApi();
+
+
+app.MapDelete("api/project/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var project = await context.Projects.FindAsync(id);
+        if (project == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.Projects.Remove(project);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteProject").WithOpenApi();
+
+app.MapDelete("api/education/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var education = await context.Educations.FindAsync(id);
+        if (education == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.Educations.Remove(education);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteEducation").WithOpenApi();
 
 
 // app.MapGet("/secure", [Authorize] () => "Secure data")

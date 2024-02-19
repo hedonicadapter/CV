@@ -23,13 +23,13 @@ namespace DataAccess.Models
 
         public DateTime[]? Dates { get; set; } = [DateTime.Today, DateTime.Today];
         public string? Location { get; set; }
+
+        [Required(ErrorMessage = "Drop a lil summary")]
         public string Summary { get; set; }
         public List<string>? Tags { get; set; }
 
         public Item()
         {
-            Title = "";
-            Summary = "";
             Tags = new List<string>();
         }
     }

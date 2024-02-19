@@ -3,6 +3,7 @@ using System;
 using DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20240219124600_PolymorphicItems")]
+    partial class PolymorphicItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -81,7 +84,7 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Education", b =>
+            modelBuilder.Entity("DataAccess.Models.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,8 +93,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("Dates")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Degree")
+                    b.Property<string>("Discriminator")
                         .IsRequired()
+                        .HasMaxLength(13)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Location")
@@ -118,85 +122,11 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("ResumeId");
 
-                    b.ToTable("Educations");
-                });
+                    b.ToTable("Items");
 
-            modelBuilder.Entity("DataAccess.Models.Experience", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Item");
 
-                    b.Property<string>("Dates")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ResumeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Subtitle")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResumeId");
-
-                    b.ToTable("Experiences");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.Project", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Bulletpoints")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Dates")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Link")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ResumeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Subtitle")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResumeId");
-
-                    b.ToTable("Projects");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("DataAccess.Models.Resume", b =>
@@ -376,30 +306,66 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.Education", b =>
                 {
-                    b.HasOne("DataAccess.Models.Resume", "Resume")
-                        .WithMany("Educations")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("DataAccess.Models.Item");
 
-                    b.Navigation("Resume");
+                    b.Property<string>("Degree")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ResumeId1")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ResumeId1");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("ResumeId1")
+                                .HasColumnName("Education_ResumeId1");
+                        });
+
+                    b.HasDiscriminator().HasValue("Education");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Experience", b =>
                 {
-                    b.HasOne("DataAccess.Models.Resume", "Resume")
-                        .WithMany("Experiences")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("DataAccess.Models.Item");
 
-                    b.Navigation("Resume");
+                    b.Property<int?>("ResumeId1")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ResumeId1");
+
+                    b.HasDiscriminator().HasValue("Experience");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Project", b =>
                 {
+                    b.HasBaseType("DataAccess.Models.Item");
+
+                    b.Property<string>("Bulletpoints")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ResumeId1")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ResumeId1");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("ResumeId1")
+                                .HasColumnName("Project_ResumeId1");
+                        });
+
+                    b.HasDiscriminator().HasValue("Project");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.Item", b =>
+                {
                     b.HasOne("DataAccess.Models.Resume", "Resume")
-                        .WithMany("Projects")
+                        .WithMany()
                         .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -456,6 +422,27 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Models.Education", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", null)
+                        .WithMany("Educations")
+                        .HasForeignKey("ResumeId1");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.Experience", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", null)
+                        .WithMany("Experiences")
+                        .HasForeignKey("ResumeId1");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.Project", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", null)
+                        .WithMany("Projects")
+                        .HasForeignKey("ResumeId1");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Resume", b =>
