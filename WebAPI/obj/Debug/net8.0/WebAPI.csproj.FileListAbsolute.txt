@@ -288,3 +288,7 @@ F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\ref\WebAPI.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\obj\Debug\net8.0\WebAPI.sourcelink.json
 F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Components.DataAnnotations.Validation.xml
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\ConvertApi.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Azure.Storage.Blobs.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Azure.Storage.Common.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\System.IO.Hashing.dll

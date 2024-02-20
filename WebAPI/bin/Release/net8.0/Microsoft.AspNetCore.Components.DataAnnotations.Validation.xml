@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNetCore.Components.DataAnnotations.Validation</name>
+    </assembly>
+    <members>
+        <member name="T:System.ComponentModel.DataAnnotations.ComparePropertyAttribute">
+            <summary>
+            A <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute"/> that compares two properties
+            </summary>
+        </member>
+        <member name="M:System.ComponentModel.DataAnnotations.ComparePropertyAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of <see cref="T:System.ComponentModel.DataAnnotations.ComparePropertyAttribute"/>.
+            </summary>
+            <param name="otherProperty">The property to compare with the current property.</param>
+        </member>
+        <member name="M:System.ComponentModel.DataAnnotations.ComparePropertyAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:System.ComponentModel.DataAnnotations.ValidateComplexTypeAttribute">
+            <summary>
+            A <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute"/> that indicates that the property is a complex or collection type that further needs to be validated.
+            <para>
+            By default <see cref="T:System.ComponentModel.DataAnnotations.Validator"/> does not recurse in to complex property types during validation.
+            When used in conjunction with <see cref="T:Microsoft.AspNetCore.Components.Forms.ObjectGraphDataAnnotationsValidator"/>, this property allows the validation system to validate
+            complex or collection type properties.
+            </para>
+            </summary>
+        </member>
+        <member name="M:System.ComponentModel.DataAnnotations.ValidateComplexTypeAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

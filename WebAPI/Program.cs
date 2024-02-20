@@ -5,13 +5,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using DataAccess.Models;
+using ConvertApiDotNet;
+using ConvertApiDotNet.Exceptions;
+using System.Net;
+using Azure.Storage.Blobs;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<CVContext>(options =>
 {
-    options.UseSqlite("Data Source=../DataAccess/CV.db");
+    options.UseSqlServer(System.Environment.GetEnvironmentVariable("SQL_DB_CONNECTION") ?? "Data Source=../DataAccess/CV.db");
     options.EnableSensitiveDataLogging();
 });
 
@@ -24,15 +29,36 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.MapPost("api/pdf", async (string html) =>
+{
+    try
+    {
+        var convertApi = new ConvertApi("LToj5AhGGVxPrfGX");
+        var conversionTask = await convertApi.ConvertAsync("html", "pdf",
+            new ConvertApiFileParam("https://shfilestorage.blob.core.windows.net/cv-html/cv.html")
+        );
+        var files = conversionTask.Files;
+        Console.WriteLine(files.ToString());
+        return Results.Ok(files);
+    }
+    catch (ConvertApiException e)
+    {
+        Console.WriteLine("Status Code: " + e.StatusCode);
+        Console.WriteLine("Response: " + e.Response);
+
+        if (e.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            Console.WriteLine("Secret is not provided or no additional seconds left in the account to proceed conversion. More information https://www.convertapi.com/a;");
+        }
+
+        return Results.StatusCode((int)e.StatusCode);
+    }
+});
 
 app.MapGet("api/resume", async (CVContext context) =>
 {
@@ -48,6 +74,7 @@ app.MapGet("api/resume", async (CVContext context) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 
@@ -63,12 +90,14 @@ app.MapPut("api/resume", async (CVContext context, Resume resume) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("PutResume").WithOpenApi();
 
 app.MapPost("api/resume", async (CVContext context, Resume resume) =>
 {
+    Console.WriteLine("posting");
     try
     {
         if (context.Resumes.Any(r => r.Id == resume.Id))
@@ -85,6 +114,7 @@ app.MapPost("api/resume", async (CVContext context, Resume resume) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("PostResume").WithOpenApi();
@@ -105,11 +135,37 @@ app.MapDelete("api/resume/{id}", async (CVContext context, int id) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteResume").WithOpenApi();
 
-app.MapDelete("api/Experience/{id}", async (CVContext context, int id) =>
+app.MapPost("api/resume/html", async (string html) =>
+{
+    try
+    {
+        Console.WriteLine($"saving {html}");
+        string containerName = "cv-html";
+        string blobName = "cv.html";
+
+        BlobServiceClient blobServiceClient = new BlobServiceClient(System.Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING"));
+        BlobClient blobClient = blobServiceClient.GetBlobContainerClient(containerName).GetBlobClient(blobName);
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(html));
+        await blobClient.UploadAsync(stream, true);
+
+        string blobUrl = blobClient.Uri.AbsoluteUri;
+
+        return Results.Ok(blobUrl);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("PostResumeAsHTML").WithOpenApi();
+
+app.MapDelete("api/experience/{id}", async (CVContext context, int id) =>
 {
     try
     {
@@ -125,6 +181,7 @@ app.MapDelete("api/Experience/{id}", async (CVContext context, int id) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteExperience").WithOpenApi();
@@ -146,6 +203,7 @@ app.MapDelete("api/project/{id}", async (CVContext context, int id) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteProject").WithOpenApi();
@@ -166,6 +224,7 @@ app.MapDelete("api/education/{id}", async (CVContext context, int id) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteEducation").WithOpenApi();
