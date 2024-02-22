@@ -34,6 +34,13 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.MapGet("api/pdf", async () =>
+{
+    var httpClient = new HttpClient();
+    var response = await httpClient.GetAsync("https://shfilestorage.blob.core.windows.net/cv-html/cv.html");
+    return Results.Ok("Hello World");
+});
+
 app.MapPost("api/pdf", async (string html) =>
 {
     try
@@ -44,6 +51,8 @@ app.MapPost("api/pdf", async (string html) =>
         );
         var files = conversionTask.Files;
         Console.WriteLine(files.ToString());
+
+
         return Results.Ok(files);
     }
     catch (ConvertApiException e)
@@ -140,11 +149,13 @@ app.MapDelete("api/resume/{id}", async (CVContext context, int id) =>
     }
 }).WithName("DeleteResume").WithOpenApi();
 
-app.MapPost("api/resume/html", async (string html) =>
+app.MapPost("api/resume/html", async (HttpContext httpContext) =>
 {
     try
     {
-        Console.WriteLine($"saving {html}");
+        var html = await httpContext.Request.ReadFromJsonAsync<string>();
+        if (html == null) return Results.BadRequest("No HTML provided");
+
         string containerName = "cv-html";
         string blobName = "cv.html";
 
@@ -152,7 +163,7 @@ app.MapPost("api/resume/html", async (string html) =>
         BlobClient blobClient = blobServiceClient.GetBlobContainerClient(containerName).GetBlobClient(blobName);
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(html));
-        await blobClient.UploadAsync(stream, true);
+        await blobClient.UploadAsync(stream, overwrite: true);
 
         string blobUrl = blobClient.Uri.AbsoluteUri;
 

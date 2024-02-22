@@ -17,7 +17,8 @@
       "applicationUrl": "http://localhost:5178",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=shfilestorage;AccountKey=xWl+B0DIr13N7oWbDB19GPhQp8VRfTOmVPkDbCLdeRRhnTRuEL34YyhPcDno0Eacbm0oxYZPQUJP+AStzpduGw==;EndpointSuffix=core.windows.net"
       }
     },
     "https": {
@@ -28,7 +29,8 @@
       "applicationUrl": "https://localhost:7248;http://localhost:5178",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=shfilestorage;AccountKey=xWl+B0DIr13N7oWbDB19GPhQp8VRfTOmVPkDbCLdeRRhnTRuEL34YyhPcDno0Eacbm0oxYZPQUJP+AStzpduGw==;EndpointSuffix=core.windows.net"
       }
     },
     "IIS Express": {
@@ -37,7 +39,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        "SQL_DB_CONNECTION": "Server=tcp:sh-cv-sqlserver.database.windows.net,1433;Initial Catalog=sh-cv-db;Persist Security Info=False;User ID=busta;Password=Password1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=shfilestorage;AccountKey=xWl+B0DIr13N7oWbDB19GPhQp8VRfTOmVPkDbCLdeRRhnTRuEL34YyhPcDno0Eacbm0oxYZPQUJP+AStzpduGw==;EndpointSuffix=core.windows.net"
       }
     }
   }
