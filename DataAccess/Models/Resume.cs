@@ -34,17 +34,17 @@ namespace DataAccess.Models
         public List<Education>? Educations { get; set; }
         public List<Project>? Projects { get; set; }
         public List<Experience>? Experiences { get; set; }
-        public List<string>? SoftSkills { get; set; }
+        public List<Skill>? SoftSkills { get; set; }
 
-        public List<string>? HardSkills { get; set; }
+        public List<Skill>? HardSkills { get; set; }
 
         public Resume()
         {
             Educations = new List<Education>();
             Projects = new List<Project>();
             Experiences = new List<Experience>();
-            SoftSkills = new List<string>();
-            HardSkills = new List<string>();
+            SoftSkills = new List<Skill>();
+            HardSkills = new List<Skill>();
         }
 
     }

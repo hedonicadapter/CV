@@ -77,6 +77,8 @@ app.MapGet("api/resume", async (CVContext context) =>
         .Include(r => r.Educations)
         .Include(r => r.Projects)
         .Include(r => r.Experiences)
+        .Include(r => r.SoftSkills)
+        .Include(r => r.HardSkills)
         .FirstOrDefaultAsync();
 
         return resume == null ? Results.NotFound() : Results.Ok(resume);
