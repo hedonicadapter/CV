@@ -12,9 +12,37 @@ namespace DataAccess.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        [ForeignKey("Resume")]
+        public int ResumeId { get; set; }
+        public Resume Resume { get; set; }
+
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
         public int? Rating { get; set; }
         public int? Experience { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Skill skill)
+            {
+                return Name == skill.Name;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name?.GetHashCode() ?? 0;
+        }
+    }
+
+    public class HardSkill : Skill
+    {
+    }
+
+    public class SoftSkill : Skill
+    {
     }
 }

@@ -32,19 +32,23 @@ namespace DataAccess.Models
 
         [ValidateComplexType]
         public List<Education>? Educations { get; set; }
+        [ValidateComplexType]
         public List<Project>? Projects { get; set; }
+        [ValidateComplexType]
         public List<Experience>? Experiences { get; set; }
-        public List<Skill>? SoftSkills { get; set; }
+        [ValidateComplexType]
+        public List<SoftSkill>? SoftSkills { get; set; }
 
-        public List<Skill>? HardSkills { get; set; }
+        [ValidateComplexType]
+        public List<HardSkill>? HardSkills { get; set; }
 
         public Resume()
         {
             Educations = new List<Education>();
             Projects = new List<Project>();
             Experiences = new List<Experience>();
-            SoftSkills = new List<Skill>();
-            HardSkills = new List<Skill>();
+            SoftSkills = new List<SoftSkill>();
+            HardSkills = new List<HardSkill>();
         }
 
     }

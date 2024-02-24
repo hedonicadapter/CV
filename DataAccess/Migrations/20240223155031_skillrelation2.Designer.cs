@@ -4,6 +4,7 @@ using DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20240223155031_skillrelation2")]
+    partial class skillrelation2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,34 +170,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Experiences");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("Experience")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ResumeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResumeId");
-
-                    b.ToTable("HardSkills");
-                });
-
             modelBuilder.Entity("DataAccess.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -278,13 +253,18 @@ namespace DataAccess.Migrations
                     b.ToTable("Resumes");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
+            modelBuilder.Entity("DataAccess.Models.Skill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<int?>("Experience")
                         .HasColumnType("int");
@@ -301,9 +281,11 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ResumeId");
+                    b.ToTable("Skills");
 
-                    b.ToTable("SoftSkills");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Skill");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -443,6 +425,24 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
+                {
+                    b.HasBaseType("DataAccess.Models.Skill");
+
+                    b.HasIndex("ResumeId");
+
+                    b.HasDiscriminator().HasValue("HardSkill");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
+                {
+                    b.HasBaseType("DataAccess.Models.Skill");
+
+                    b.HasIndex("ResumeId");
+
+                    b.HasDiscriminator().HasValue("SoftSkill");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Education", b =>
                 {
                     b.HasOne("DataAccess.Models.Resume", "Resume")
@@ -465,32 +465,10 @@ namespace DataAccess.Migrations
                     b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
-                {
-                    b.HasOne("DataAccess.Models.Resume", "Resume")
-                        .WithMany("HardSkills")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resume");
-                });
-
             modelBuilder.Entity("DataAccess.Models.Project", b =>
                 {
                     b.HasOne("DataAccess.Models.Resume", "Resume")
                         .WithMany("Projects")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resume");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
-                {
-                    b.HasOne("DataAccess.Models.Resume", "Resume")
-                        .WithMany("SoftSkills")
                         .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -547,6 +525,28 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", "Resume")
+                        .WithMany("HardSkills")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", "Resume")
+                        .WithMany("SoftSkills")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Resume", b =>

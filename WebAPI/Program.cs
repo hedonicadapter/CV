@@ -16,7 +16,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<CVContext>(options =>
 {
-    options.UseSqlServer(System.Environment.GetEnvironmentVariable("SQL_DB_CONNECTION") ?? "Data Source=../DataAccess/CV.db");
+    options.UseSqlServer(System.Environment.GetEnvironmentVariable("SQL_DB_CONNECTION") ?? "Data Source=../DataAccess/CV.db", sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
     options.EnableSensitiveDataLogging();
 });
 
@@ -241,6 +247,48 @@ app.MapDelete("api/education/{id}", async (CVContext context, int id) =>
         return Results.BadRequest(ex.Message);
     }
 }).WithName("DeleteEducation").WithOpenApi();
+
+app.MapDelete("api/hardskill/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var skill = await context.HardSkills.FindAsync(id);
+        if (skill == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.HardSkills.Remove(skill);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteHardSkill").WithOpenApi();
+
+app.MapDelete("api/softskill/{id}", async (CVContext context, int id) =>
+{
+    try
+    {
+        var skill = await context.SoftSkills.FindAsync(id);
+        if (skill == null)
+        {
+            return Results.NotFound();
+        }
+
+        context.SoftSkills.Remove(skill);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        return Results.BadRequest(ex.Message);
+    }
+}).WithName("DeleteSoftSkill").WithOpenApi();
 
 
 // app.MapGet("/secure", [Authorize] () => "Secure data")
