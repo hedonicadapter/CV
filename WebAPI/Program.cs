@@ -60,7 +60,7 @@ app.MapGet("api/pdf", async (IHttpClientFactory clientFactory) =>
         try
         {
             pdfcrowd.HtmlToPdfClient client =
-                            new pdfcrowd.HtmlToPdfClient("demo", "ce544b6ea52a5621fb9d55f8b542d14d");
+                            new pdfcrowd.HtmlToPdfClient("demo", "ce544b6ea52a5621fb9d55f8b542d14d"); // Demo key, behöver inte gömmas
 
             // configure the conversion
             client.setPageSize("A4");
