@@ -10,9 +10,15 @@ using ConvertApiDotNet.Exceptions;
 using System.Net;
 using Azure.Storage.Blobs;
 using System.Text;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using DocRaptor.Client;
+using DocRaptor.Model;
+using DocRaptor.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<CVContext>(options =>
 {
@@ -40,26 +46,41 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.MapGet("api/pdf", async () =>
-{
-    var httpClient = new HttpClient();
-    var response = await httpClient.GetAsync("https://shfilestorage.blob.core.windows.net/cv-html/cv.html");
-    return Results.Ok("Hello World");
-});
 
-app.MapPost("api/pdf", async (string html) =>
+
+app.MapGet("api/pdf", async (IHttpClientFactory clientFactory) =>
 {
     try
     {
-        var convertApi = new ConvertApi("LToj5AhGGVxPrfGX");
-        var conversionTask = await convertApi.ConvertAsync("html", "pdf",
-            new ConvertApiFileParam("https://shfilestorage.blob.core.windows.net/cv-html/cv.html")
-        );
-        var files = conversionTask.Files;
-        Console.WriteLine(files.ToString());
+        var httpClient = clientFactory.CreateClient();
+        var response = await httpClient.GetAsync("https://shfilestorage.blob.core.windows.net/cv-html/cv.html");
+        if (!response.IsSuccessStatusCode) return Results.BadRequest("Could not download html file");
+        var content = await response.Content.ReadAsStringAsync();
+
+        try
+        {
+            pdfcrowd.HtmlToPdfClient client =
+                            new pdfcrowd.HtmlToPdfClient("demo", "ce544b6ea52a5621fb9d55f8b542d14d");
+
+            // configure the conversion
+            client.setPageSize("A4");
+            client.setOrientation("portrait");
+            client.setNoMargins(true);
+            client.setLocale("se-SV");
+            client.setRetryCount(3);
+
+            byte[] pdf = client.convertString(content);
+
+            return Results.File(pdf, "application/pdf", "hedonicadaptercv.pdf");
+        }
+        catch (pdfcrowd.Error why)
+        {
+            System.Console.Error.WriteLine("Pdfcrowd Error: " + why);
+
+            return Results.BadRequest(why);
+        }
 
 
-        return Results.Ok(files);
     }
     catch (ConvertApiException e)
     {

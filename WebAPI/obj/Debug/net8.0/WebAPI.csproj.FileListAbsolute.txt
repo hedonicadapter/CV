@@ -292,3 +292,7 @@ F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\ConvertApi.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Azure.Storage.Blobs.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\Azure.Storage.Common.dll
 F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\System.IO.Hashing.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\DocRaptor.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\JsonSubTypes.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\RestSharp.dll
+F:\Coding\ITHSLabbar\CV\WebAPI\bin\Debug\net8.0\pdfcrowd.dll

@@ -141,9 +141,17 @@
               "target": "Package",
               "version": "[3.0.14, )"
             },
+            "DocRaptor": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.2, )"
+            },
+            "Pdfcrowd.Official": {
+              "target": "Package",
+              "version": "[5.17.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

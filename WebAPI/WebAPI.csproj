@@ -9,7 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0-beta.1" />
     <PackageReference Include="ConvertApi" Version="3.0.14" />
+    <PackageReference Include="DocRaptor" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
+    <PackageReference Include="Pdfcrowd.Official" Version="5.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 

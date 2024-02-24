@@ -92,6 +92,20 @@
           "lib/netcoreapp3.1/ConvertApi.dll": {}
         }
       },
+      "DocRaptor/4.0.0": {
+        "type": "package",
+        "dependencies": {
+          "JsonSubTypes": "1.6.0",
+          "Newtonsoft.Json": "12.0.3",
+          "RestSharp": "105.1.0"
+        },
+        "compile": {
+          "lib/DocRaptor.dll": {}
+        },
+        "runtime": {
+          "lib/DocRaptor.dll": {}
+        }
+      },
       "Humanizer/2.14.1": {
         "type": "package",
         "dependencies": {
@@ -684,6 +698,18 @@
           "lib/net6.0/zh-Hant/Humanizer.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "JsonSubTypes/1.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/JsonSubTypes.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/JsonSubTypes.dll": {}
         }
       },
       "Microsoft.AspNetCore.Cryptography.Internal/8.0.1": {
@@ -2320,6 +2346,32 @@
           }
         }
       },
+      "Pdfcrowd.Official/5.17.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/pdfcrowd.dll": {
+            "related": ".pdb"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/pdfcrowd.dll": {
+            "related": ".pdb"
+          }
+        }
+      },
+      "RestSharp/105.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net452/RestSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net452/RestSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.6": {
         "type": "package",
         "dependencies": {
@@ -3307,6 +3359,19 @@
         "lib/netstandard2.0/ConvertApi.dll"
       ]
     },
+    "DocRaptor/4.0.0": {
+      "sha512": "PoNENGHeD1WBWCD9r2yWgalrlqF672Ht2aZEUC9U1KIlLVGM7oWYSRGE/Mm+GR5ZF5OyBpnbpBco44f0To39rg==",
+      "type": "package",
+      "path": "docraptor/4.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "docraptor.4.0.0.nupkg.sha512",
+        "docraptor.nuspec",
+        "lib/DocRaptor.dll"
+      ]
+    },
     "Humanizer/2.14.1": {
       "sha512": "/FUTD3cEceAAmJSCPN9+J+VhGwmL/C12jvwlyM1DFXShEMsBzvLzLqSrJ2rb+k/W2znKw7JyflZgZpyE+tI7lA==",
       "type": "package",
@@ -4051,6 +4116,28 @@
         "lib/netstandard1.0/zh-Hant/Humanizer.resources.dll",
         "lib/netstandard2.0/zh-Hant/Humanizer.resources.dll",
         "logo.png"
+      ]
+    },
+    "JsonSubTypes/1.6.0": {
+      "sha512": "XhoIgNod80d5E0Eqk6kKIyA8GSmtZNyf3vPy1uJezYI67aDI0/y7Pjrw/O8sDU1+EuoVr0OCUstAuKdjkwOxeA==",
+      "type": "package",
+      "path": "jsonsubtypes/1.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "jsonsubtypes.1.6.0.nupkg.sha512",
+        "jsonsubtypes.nuspec",
+        "lib/net35/JsonSubTypes.dll",
+        "lib/net40/JsonSubTypes.dll",
+        "lib/net45/JsonSubTypes.dll",
+        "lib/net46/JsonSubTypes.dll",
+        "lib/net47/JsonSubTypes.dll",
+        "lib/netstandard1.3/JsonSubTypes.dll",
+        "lib/netstandard1.4/JsonSubTypes.dll",
+        "lib/netstandard1.5/JsonSubTypes.dll",
+        "lib/netstandard1.6/JsonSubTypes.dll",
+        "lib/netstandard2.0/JsonSubTypes.dll"
       ]
     },
     "Microsoft.AspNetCore.Cryptography.Internal/8.0.1": {
@@ -7447,6 +7534,68 @@
         "nuget.versioning.nuspec"
       ]
     },
+    "Pdfcrowd.Official/5.17.0": {
+      "sha512": "0FlPIxlpZsOotacoQG/j9r9fifKQxzXtcVSie7dJvoqxt7a5uMCMZGYCiin8pU2qfZleelSzN3qdvfjhMYo5hw==",
+      "type": "package",
+      "path": "pdfcrowd.official/5.17.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "lib/net20/pdfcrowd.dll",
+        "lib/net20/pdfcrowd.pdb",
+        "lib/net5.0/pdfcrowd.dll",
+        "lib/net5.0/pdfcrowd.pdb",
+        "lib/netcoreapp2.0/pdfcrowd.dll",
+        "lib/netcoreapp2.0/pdfcrowd.pdb",
+        "lib/netstandard2.0/pdfcrowd.dll",
+        "lib/netstandard2.0/pdfcrowd.pdb",
+        "pdfcrowd.official.5.17.0.nupkg.sha512",
+        "pdfcrowd.official.nuspec",
+        "pdfcrowd.png",
+        "src/AssemblyInfo.cs",
+        "src/Client.cs",
+        "src/Error.cs",
+        "src/Pdfcrowd.cs"
+      ]
+    },
+    "RestSharp/105.1.0": {
+      "sha512": "2DRH1cpTOJwesBOwQ0cIhVHUmupbRKt+tdSatfdvndvsawsGMIEgrbq8yv6g3GM1MRVcb37bT8LACVFsqITDmg==",
+      "type": "package",
+      "path": "restsharp/105.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35-client/RestSharp.dll",
+        "lib/net35-client/RestSharp.xml",
+        "lib/net35/RestSharp.dll",
+        "lib/net35/RestSharp.xml",
+        "lib/net4-client/RestSharp.dll",
+        "lib/net4-client/RestSharp.xml",
+        "lib/net4/RestSharp.dll",
+        "lib/net4/RestSharp.xml",
+        "lib/net45-client/RestSharp.dll",
+        "lib/net45-client/RestSharp.xml",
+        "lib/net45/RestSharp.dll",
+        "lib/net45/RestSharp.xml",
+        "lib/net451-client/RestSharp.dll",
+        "lib/net451-client/RestSharp.xml",
+        "lib/net451/RestSharp.dll",
+        "lib/net451/RestSharp.xml",
+        "lib/net452-client/RestSharp.dll",
+        "lib/net452-client/RestSharp.xml",
+        "lib/net452/RestSharp.dll",
+        "lib/net452/RestSharp.xml",
+        "lib/sl4/RestSharp.Silverlight.dll",
+        "lib/sl4/RestSharp.Silverlight.xml",
+        "lib/windowsphone8/RestSharp.WindowsPhone.dll",
+        "lib/windowsphone8/RestSharp.WindowsPhone.xml",
+        "readme.txt",
+        "restsharp.105.1.0.nupkg.sha512",
+        "restsharp.nuspec"
+      ]
+    },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.6": {
       "sha512": "BmAf6XWt4TqtowmiWe4/5rRot6GerAeklmOPfviOvwLoF5WwgxcJHAxZtySuyW9r9w+HLILnm8VfJFLCUJYW8A==",
       "type": "package",
@@ -8950,7 +9099,9 @@
       "Azure.Storage.Blobs >= 12.20.0-beta.1",
       "ConvertApi >= 3.0.14",
       "DataAccess >= 1.0.0",
+      "DocRaptor >= 4.0.0",
       "Microsoft.AspNetCore.OpenApi >= 8.0.2",
+      "Pdfcrowd.Official >= 5.17.0",
       "Swashbuckle.AspNetCore >= 6.4.0"
     ]
   },
@@ -9003,9 +9154,17 @@
             "target": "Package",
             "version": "[3.0.14, )"
           },
+          "DocRaptor": {
+            "target": "Package",
+            "version": "[4.0.0, )"
+          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[8.0.2, )"
+          },
+          "Pdfcrowd.Official": {
+            "target": "Package",
+            "version": "[5.17.0, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
@@ -9034,5 +9193,27 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'DocRaptor 4.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "DocRaptor",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'RestSharp 105.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "RestSharp",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
