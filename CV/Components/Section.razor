@@ -1,0 +1,73 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
+<div @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" class=''>
+    <div class='flex flex-row items-baseline gap-3'>
+        <h2 class='pb-4'>@Title</h2>
+
+        @if (IsSignedIn && OnClickCallback.HasDelegate)
+        {
+            <button type="button" @onclick="@(async ()=>await OnClickCallback.InvokeAsync(Alias))"
+                class="admin-content transition-opacity @(isHovered ? "opacity-100" : "opacity-40")">Add</button>
+        }
+    </div>
+    <div class='pl-4'>
+        @if (Title?.ToLower() == "profil")
+        {
+            if (IsSignedIn)
+            {
+                <div id="profil-text" onload="setProfileBodyPlainText(@Body)" contenteditable="true"
+                    class='min-w-full overflow-hidden admin-content min-h-1 outline-1 outline'>
+                    @* @(string.IsNullOrEmpty(Body) ? "" : Body.ToString()) *@
+                </div>
+            }
+            else if (!string.IsNullOrWhiteSpace(Body.ToString()))
+            {
+                <div onload="setProfileBody(@Body)" id="profil-text" class='min-w-full overflow-hidden min-h-1'></div>
+            }
+        }
+
+        <div class="flex flex-col gap-4">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    private Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState>? authenticationState { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Alias { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnClickCallback { get; set; }
+
+
+    private ElementReference ContentEditableDiv { get; set; }
+
+    [Parameter]
+    public bool IsSignedIn { get; set; } = false;
+
+    private bool isHovered { get; set; } = false;
+
+    private void OnMouseEnter()
+    {
+        isHovered = true;
+    }
+
+    private void OnMouseLeave()
+    {
+        isHovered = false;
+    }
+}

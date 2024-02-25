@@ -1,0 +1,206 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using DataAccess.Models
+@using Common.Util
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveAuto
+
+<div
+    class='transition-all -m-3 p-3 rounded-lg outline-1 outline @(DeleteButtonHovered ? "outline-[#ce796b] text-[#ce796b]":"outline-[transparent]")'>
+
+    <div id="@this.GetHashCode()" class='relative flex flex-col gap-3'>
+
+        <div class='flex flex-row flex-wrap justify-between gap-2'>
+            <div class='flex flex-col flex-[1.6] '>
+                <ValidationMessage For="@(() => Item.Title)" />
+                <div>
+                    <InputTextArea placeholder="Heading" onload="autoSize(this)" oninput="autoSize(this)"
+                        class='w-full overflow-hidden resize-none h3-input' @bind-Value="Item.Title" />
+                    <div class="relative w-full opacity-0 max-h-[0px]">
+                        <h3 class='absolute top-0 bottom-0 left-0 right-0 break-all pointer-events-none size-reference'>
+                            @Item.Title</h3>
+                    </div>
+                </div>
+
+                <div>
+                    <InputTextArea placeholder="Sub-heading" oninput="autoSize(this)"
+                        class='w-full p-0 m-0 overflow-hidden resize-none h5-input' @bind-Value="Item.Subtitle" />
+                    <div class="relative w-full opacity-0 max-h-[0px]">
+                        <h5
+                            class='absolute top-0 bottom-0 left-0 right-0 break-all pointer-events-none size-reference h-max w-max'>
+                            @Item.Subtitle</h5>
+                    </div>
+                </div>
+            </div>
+            <div class='flex flex-col flex-[0.8] gap-1 text-on-bg-light opacity-80'>
+                <div class='flex flex-row items-center justify-end gap-2'>
+                    <div class="relative flex flex-row justify-end">
+                        <input onload="autoSize(this)" oninput="autoSize(this)"
+                            class='absolute top-0 left-0 z-10 h-full opacity-0' min="1960-01-01" type="month"
+                            @bind="FromDate" />
+                        <h5
+                            class='size-reference absolute top-0 left-0 text-right w-max right-0 pointer-events-none z-[-1!important] '>
+                            @FromDate.ToString("MMM yy")
+                        </h5>
+                    </div>
+                    <div class='h5-input'>
+                        -
+                    </div>
+                    <div class="relative flex flex-row justify-end">
+                        <input onload="autoSize(this)" oninput="autoSize(this)"
+                            class='absolute top-0 left-0 z-10 h-full opacity-0' min="1960-01-01" type="month"
+                            @bind="ToDate" />
+                        <h5
+                            class='size-reference absolute top-0 left-0 text-right w-max right-0 pointer-events-none z-[-1!important] '>
+                            @ToDate.ToString("MMM yy")
+                        </h5>
+                    </div>
+                    <div class='material-symbols-outlined h5-input'>
+                        calendar_today
+                    </div>
+                </div>
+                <div class='flex flex-row items-center justify-end gap-2'>
+                    <InputText placeholder="Location" class='text-right h5-input' @bind-Value="Item.Location" />
+                    <div class='material-symbols-outlined h5-input'>
+                        location_on
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <InputTextArea placeholder="Summary" class='w-full overflow-hidden resize-none' oninput="autoSize(this)"
+                @bind-Value="Item.Summary" />
+            <div class="relative w-full opacity-0 max-h-[0px]">
+                <div
+                    class='absolute top-0 bottom-0 left-0 right-0 break-all pointer-events-none textarea-input size-reference'>
+                    @Body
+                </div>
+            </div>
+        </div>
+
+        <div class='flex flex-row flex-wrap w-full gap-2'>
+            @{
+                if (Item.Tags != null)
+                {
+                    foreach (var tag in Item.Tags)
+                    {
+                        <div class='tag bg-[var(--tag-bg)!important] rounded-full py-1 px-3'>
+                            @tag
+                        </div>
+                    }
+                }
+                <CascadingAuthenticationState>
+                    <AuthorizeView>
+                        <div data-tip="Enter tags separated by a comma and a space">
+                            <InputText class="admin-content w-max tags-input" type="text" placeholder="Tag"
+                                @bind-Value="TagsInputValue" @oninput="TagsInputValueChange"
+                                @onkeydown="TagsInputKeyDown" />
+                        </div>
+                    </AuthorizeView>
+                </CascadingAuthenticationState>
+            }
+        </div>
+
+        <div class='rounded-full min-w-[75%] ml-0 mr-auto bg-[var(--on-bg-medium)!important] opacity-5 min-h-1'></div>
+
+        <CascadingAuthenticationState>
+            <AuthorizeView>
+                <button
+                    @onclick="@(async ()=>await HandleDeleteCallback.InvokeAsync(new CallbackParamsModel(Alias, Item.Id)))"
+                    @onmouseenter="HandleDeleteButtonMouseEnter" @onmouseleave="HandleDeleteButtonMouseLeave"
+                    type="button"
+                    class='admin-content absolute bottom-0 right-0 opacity-40 transition-all hover:opacity-100 hover:color-[#ce796b]'><span
+                        class='material-symbols-outlined'>delete_forever</span></button>
+            </AuthorizeView>
+        </CascadingAuthenticationState>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Alias { get; set; }
+    [Parameter]
+    public EventCallback<CallbackParamsModel> HandleDeleteCallback { get; set; }
+
+    [Parameter]
+    public Item Item { get; set; }
+
+    [Parameter]
+    public string Body { get; set; } = "";
+
+    public string Title { get; set; }
+    public DateTime FromDate { get => Item.Dates[0]; set => Item.Dates[0] = value; }
+    public DateTime ToDate { get => Item.Dates[1]; set => Item.Dates[1] = value; }
+    private string TagsInputValue { get; set; } = "";
+
+    private bool DeleteButtonHovered = false;
+
+    private void HandleDeleteButtonMouseEnter()
+    {
+        DeleteButtonHovered = true;
+    }
+
+    private void HandleDeleteButtonMouseLeave()
+    {
+        DeleteButtonHovered = false;
+    }
+
+
+
+    private void TagsInputKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Backspace" && string.IsNullOrEmpty(TagsInputValue))
+        {
+            if (Item.Tags != null && Item.Tags.Count > 0)
+            {
+                Item.Tags.RemoveAt(Item.Tags.Count - 1);
+            }
+        }
+    }
+
+
+    @* .NET dödar mig just nu https://github.com/dotnet/aspnetcore/issues/21179#issuecomment-1852564991 *@
+    public async Task ResetTagsInput()
+    {
+        TagsInputValue = "";
+        await Task.Yield();
+        StateHasChanged();
+
+        await JSRuntime.InvokeVoidAsync("resetTagsInput", this.GetHashCode());
+    }
+
+    private async Task TagsInputValueChange(ChangeEventArgs e)
+    {
+        if (e.Value == null || string.IsNullOrEmpty(e.Value as string)) return;
+
+        try
+        {
+            if (e.Value!.ToString().EndsWith(", ") == false) return;
+
+            Item.Tags = Item.Tags == null ? new List<string>() : Item.Tags;
+
+            var val = e.Value.ToString();
+            if (string.IsNullOrEmpty(val)) return;
+
+            Item.Tags.Add(val.Substring(0, val.Length - 2));
+            await ResetTagsInput();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            await ResetTagsInput();
+        }
+    }
+
+    // Basically useEffect here
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToElement", this.GetHashCode());
+            await JSRuntime.InvokeVoidAsync("init");
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

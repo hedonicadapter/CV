@@ -1,0 +1,66 @@
+@using DataAccess.Models
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div @onmouseenter="HandleMouseEnter" @onmouseleave="HandleMouseLeave"
+    class='flex flex-col gap-2 relative transition-colors p-3 -m-3 rounded-lg @(Expanded ? "bg-[#ebebeb]" : "") outline-1 outline @(DeleteButtonHovered ? "outline-[#ce796b] text-[#ce796b]" : "outline-[transparent]")'>
+    <div>@skill.Name</div>
+
+    <AuthorizeView>
+        <button @onclick="@(async ()=>await HandleDeleteOnClick.InvokeAsync(skill))"
+            @onmouseenter="HandleDeleteButtonMouseEnter" @onmouseleave="HandleDeleteButtonMouseLeave" type="button"
+            class='admin-content absolute top-[0.75rem] right-[1rem] opacity-40 transition-all hover:opacity-100 hover:color-[#ce796b]'><span
+                class='text-2xl material-symbols-outlined'>delete_forever</span>
+        </button>
+    </AuthorizeView>
+
+    <div class="overflow-hidden transition-all @(Expanded ? "max-h-96" : "max-h-0")">
+        <div class='flex flex-col'>
+            <p class='text-xs text-[var(--on-bg-medium)] uppercase mt-3'>
+                Skill level
+            </p>
+            <RangeInput TValue="int?" @bind-Value="skill.Rating" Min="0" Max="10" />
+        </div>
+        <div class='flex flex-col'>
+            <p class='text-xs text-[var(--on-bg-medium)] uppercase mt-3'>
+                Erfarenhet
+            </p>
+            <RangeInput TValue="int?" @bind-Value="skill.Experience" Min="0" Max="10" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Skill skill { get; set; }
+
+    [Parameter] public EventCallback<Skill> HandleDeleteOnClick { get; set; }
+
+    [Parameter] public bool IsSignedIn { get; set; } = false;
+    private bool DeleteButtonHovered = false;
+    private bool Expanded = false;
+
+
+    private void HandleMouseEnter()
+    {
+        Expanded = true;
+        StateHasChanged();
+    }
+
+    private void HandleMouseLeave()
+    {
+        Expanded = false;
+        StateHasChanged();
+    }
+
+    private void HandleDeleteButtonMouseEnter()
+    {
+        DeleteButtonHovered = true;
+        StateHasChanged();
+    }
+
+    private void HandleDeleteButtonMouseLeave()
+    {
+        DeleteButtonHovered = false;
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,356 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using CV.Interfaces
+@using DataAccess.Models
+@using Common.Util
+@inject IHttpClientFactory ClientFactory
+@inject IJSRuntime JSRuntime
+@inject IResumeClient resumeClient
+@inject IItemClient itemClient
+@inject ILogger<Index> Logger
+@inject CV.Services.ToastService ToastService
+
+<PageTitle>Home</PageTitle>
+
+<ToastComponent />
+<EditForm EditContext="editContext" Context="authContext" OnSubmit="@SubmitHandler" id="cv"
+    class='shade flex flex-col gap-12 p-4 md:p-16 max-w-[210mm] mx-auto rounded-sm bg-[var(--bg)!important] min-h-[297mm] relative'>
+
+    <ObjectGraphDataAnnotationsValidator />
+
+    <div class='flex flex-row items-center justify-between w-full gap-3'>
+        <a href='@(System.Environment.GetEnvironmentVariable("API_URL") ?? "http://localhost:5178")/api/pdf'
+            class='flex flex-row items-center gap-2'>
+            <div class='material-symbols-outlined'>download</div>
+            <div class='break-normal'>Download</div>
+        </a>
+        <div class='flex flex-row flex-wrap items-center justify-end w-full gap-3'>
+            <a href='https://github.com/hedonicadapter' target='_blank'>
+                <img class='opacity-60' src='icons/github.svg' width="30" height="30" />
+            </a>
+            <a href='https://www.linkedin.com/in/sam-herman' target='_blank'>
+                <img class='opacity-60' src='icons/linkedin.svg' width="30" height="30" />
+            </a>
+            <a href='https://hedonicadapter.vercel.app' target='_blank' class='flex bg-[var(--accent)!important] flex-row gap-2 items-center justify-between rounded-full pl-5 pr-3
+                pt-3 pb-3 text-white'>
+                <div class='text-xl break-normal underline underline-offset-4 decoration-[1px]'>
+                    Portfolio
+                </div>
+                <div class='text-xl material-symbols-outlined'>arrow_forward_ios</div>
+            </a>
+        </div>
+    </div>
+
+    <div class='flex flex-col md:flex-row'>
+        <div class='relative w-48 h-max md:flex-1'>
+            <img class='rounded-bl-[19px] h-auto relative bottom-0 z-10' alt='Me' src="/images/samba.png" />
+            <div
+                class='absolute bottom-0 left-0 border-2 border border-[var(--outline)!important] h-[calc(100%-1.5rem)] w-[80%] bg-[var(--shape-bg)!important] rounded-[236px]'>
+            </div>
+        </div>
+        <div class='flex flex-col gap-1 md:flex-[3] justify-end'>
+            <h1 class='py-2 text-5xl md:text-6xl'>Sam Herman,<br /><span
+                    class='systemutvecklare'>Systemutvecklare</span>
+            </h1>
+            <div class='flex flex-row items-center gap-2'>
+                <div class='text-xl material-symbols-outlined'>mail</div>
+                <div class='flex flex-row justify-between w-full gap-2'>
+                    <InputText class="text-lg" placeholder="example@domain.com" type="email"
+                        @bind-Value="resume.Email" />
+                    <ValidationMessage For="@(() => resume.Email)" />
+                </div>
+            </div>
+            <div class='flex flex-row items-center gap-2'>
+                <div class='text-xl material-symbols-outlined'>call</div>
+                <InputText class="text-lg" placeholder="###-## ## ##" type="phone" @bind-Value="resume.Phone" />
+            </div>
+            <div class='flex flex-row items-center gap-2'>
+                <div class='text-xl material-symbols-outlined'>cottage</div>
+                <InputText class="text-lg" placeholder="City, COUNTRY" @bind-Value="resume.Location" />
+            </div>
+        </div>
+    </div>
+
+    <div class='flex flex-row gap-4'>
+        <div class='flex flex-col flex-1 gap-12'>
+            <Section IsSignedIn="@IsSignedIn" Alias="Profile" Title="Profil" Body=@resume.Profile />
+            <Section IsSignedIn="@IsSignedIn" OnClickCallback="@AddSectionHandler" Alias="Educations"
+                Title="Utbildning">
+                @if (resume.Educations != null && resume.Educations.Count > 0)
+                {
+                    foreach (var Education in resume.Educations)
+                    {
+                        <SectionSection HandleDeleteCallback="@DeleteSectionHandler" Alias="Educations" Item="Education" />
+                    }
+                }
+            </Section>
+            <Section IsSignedIn="@IsSignedIn" OnClickCallback="@AddSectionHandler" Alias="Projects" Title="Projekt">
+                @if (resume.Projects != null && resume.Projects.Count > 0)
+                {
+                    foreach (var Project in resume.Projects)
+                    {
+                        <SectionSection HandleDeleteCallback="@DeleteSectionHandler" Alias="Projects" Item="Project" />
+                    }
+                }
+            </Section>
+            <Section IsSignedIn="@IsSignedIn" OnClickCallback="@AddSectionHandler" Alias="Experiences"
+                Title="Erfarenheter">
+                @if (resume.Experiences != null && resume.Experiences.Count > 0)
+                {
+                    foreach (var Experience in resume.Experiences)
+                    {
+                        <SectionSection HandleDeleteCallback="@DeleteSectionHandler" Alias="Experiences" Item="Experience" />
+                    }
+                }
+            </Section>
+        </div>
+
+        <div class='flex-[0.25] flex flex-col gap-10'>
+            <div>
+                <SkillsColumn IsSignedIn="@IsSignedIn" SkillsEnumerable="@(resume.HardSkills)" Alias="HardSkills"
+                    Title="Teknisk kompetens" />
+            </div>
+
+            <div>
+                <SkillsColumn IsSignedIn="@IsSignedIn" SkillsEnumerable="@(resume.SoftSkills)" Alias="SoftSkills"
+                    Title="Mjuk kompetens" />
+            </div>
+        </div>
+    </div>
+
+    <AuthorizeView>
+        <button disabled=@(Loading) type="submit"
+            class='admin-content flex flex-row items-center gap-2 justify-center z-40 bg-[var(--accent)!important] text-[white!important] px-3 py-1 rounded-full sticky right-[30px] bottom-[20px]'>
+            @if (Loading)
+            {
+                <svg class="w-5 h-5 text-white animate-spin" viewBox="0 0 24 24">
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <div>
+                    Sparar
+                </div>
+            }
+            else
+            {
+                <div>
+                    Spara
+                </div>
+            }
+        </button>
+        <div
+            class='sticky bottom-0 left-0 right-0 w-[calc(100%+4rem)] md:w-[calc(100%+1rem)] mx-auto pointer-events-none admin-content h-36 gradient-blur'>
+        </div>
+    </AuthorizeView>
+
+</EditForm>
+
+@code {
+    private EditContext editContext = new EditContext(new Resume());
+    private bool IsSignedIn;
+    private bool Loading;
+    private Resume resume = new();
+
+    [CascadingParameter]
+    private Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await LoadingJuicer<(Resume? Resume, string? ErrorMessage)>(resumeClient.GetResumeAsync);
+        resume = res.Resume ?? new Resume();
+        editContext = new EditContext(resume);
+
+        if (authenticationState is not null)
+        {
+            Loading = true;
+            await Task.Delay(1);
+            var authState = await authenticationState;
+            Loading = false;
+
+            var user = authState?.User;
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                IsSignedIn = true;
+            }
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("setProfileBody", resume.Profile);
+
+            if (IsSignedIn)
+            {
+                await JSRuntime.InvokeVoidAsync("enableEveryFormControl");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("disableEveryFormControl");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message);
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed JS interops (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+    public async Task<T> LoadingJuicer<T>(Func<Task<T>> action)
+    {
+        Loading = true;
+        StateHasChanged();
+        await Task.Delay(1);
+
+        try
+        {
+            var whatever = await action();
+
+            return whatever;
+        }
+        finally
+        {
+            Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    public async Task LoadingJuicer(Func<Task> action)
+    {
+        Loading = true;
+        StateHasChanged();
+        await Task.Delay(1);
+
+        try
+        {
+            await action();
+        }
+        finally
+        {
+            Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void AddSectionHandler(string section)
+    {
+
+        try
+        {
+            // c# är wild asså i js hade det basically varit resume[section]?.push(new Item())
+
+            var resumeProperty = resume.GetType().GetProperty(section);
+            if (resumeProperty == null) throw new Exception($"Failed to get property {section}");
+
+            var list = resumeProperty.GetValue(resume) as System.Collections.IList;
+            if (list == null) throw new Exception("Failed to get list");
+
+            var itemType = resumeProperty.PropertyType.GetGenericArguments()[0];
+            var newItem = Activator.CreateInstance(itemType);
+            list.Add(newItem);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message.ToString());
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to add section (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+
+    private async Task DeleteSectionHandler(CallbackParamsModel args)
+    {
+        try
+        {
+            var resumeProperty = resume.GetType().GetProperty(args.Section);
+            if (resumeProperty == null) return;
+
+            var list = resumeProperty.GetValue(resume) as System.Collections.IList;
+            if (list == null) return;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].GetType().GetProperty("Id").GetValue(list[i]).Equals(args.Id))
+                {
+                    await itemClient.DeleteItemAsync((list[i] as Item).Id, list[i].GetType().Name);
+                    list.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message.ToString());
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to delete section (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+    private async Task SubmitHandler(EditContext editContext)
+    {
+        try
+        {
+            var text = await JSRuntime.InvokeAsync<string>("getProfileText");
+            resume.Profile = text;
+
+            if (!editContext.Validate()) return;
+
+            var error = await LoadingJuicer<string?>(() => resumeClient.UpsertResumeAsync(resume));
+            if (error != null) throw new Exception(error);
+
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Saved! (✿◠‿◠)",
+                });
+
+            await LoadingJuicer(SaveAsHTML);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message);
+
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to save (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+    private async Task SaveAsHTML()
+    {
+        try
+        {
+            Logger.LogCritical("saving as html...");
+            var html = await JSRuntime.InvokeAsync<string>("getCV");
+            if (string.IsNullOrEmpty(html)) throw new Exception("Failed to get HTML from interop");
+
+            await resumeClient.SaveResumeAsHTMLAsync(html);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message);
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to save as HTML (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+}

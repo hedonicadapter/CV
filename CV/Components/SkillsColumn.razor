@@ -1,0 +1,151 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using DataAccess.Models
+@using CV.Interfaces
+@inject IJSRuntime JSRuntime
+@inject ISkillClient skillClient
+@inject ILogger<Index> Logger
+@inject CV.Services.ToastService ToastService
+@rendermode InteractiveAuto
+
+<div>
+    <div class='flex flex-row items-center justify-between gap-2'>
+        <h6>
+            @Title
+        </h6>
+
+    </div>
+    <div class='flex flex-col gap-2 pt-4 break-all'>
+        @if (SkillsEnumerable != null)
+        {
+            if (SkillsEnumerable is List<HardSkill> hardSkillsList && hardSkillsList.Count > 0)
+            {
+                foreach (var skill in hardSkillsList)
+                {
+                    <SkillComponent IsSignedIn="@IsSignedIn" HandleDeleteOnClick="@(async ()=>await DeleteSkill(skill ))"
+                        Skill="@skill" />
+                }
+            }
+            else if (SkillsEnumerable is List<SoftSkill> softSkillsList && softSkillsList.Count > 0)
+            {
+                foreach (var skill in softSkillsList)
+                {
+                    <SkillComponent IsSignedIn="@IsSignedIn" HandleDeleteOnClick="@(async ()=>await DeleteSkill(skill ))"
+                        Skill="@skill" />
+                }
+            }
+        }
+    </div>
+
+    <CascadingAuthenticationState>
+        <AuthorizeView>
+            <div data-tip="Enter skills separated by a comma and a space">
+                <InputText @bind-Value="SkillInputValue" id="@this.GetHashCode()" @onkeydown="InputKeyDown"
+                    @oninput="skillInputHandler" type="text" placeholder="Skill"
+                    class='w-full p-0 m-0 mt-4 overflow-hidden leading-10 resize-none h5-input' />
+            </div>
+        </AuthorizeView>
+    </CascadingAuthenticationState>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Alias { get; set; }
+
+    [Parameter]
+    public IEnumerable<Skill> SkillsEnumerable { get; set; }
+
+    [Parameter]
+    public bool IsSignedIn { get; set; } = false;
+
+    public string SkillInputValue { get; set; } = "";
+
+    private async Task InputKeyDown(KeyboardEventArgs e)
+    {
+        try
+        {
+            if (e.Key == "Backspace" && string.IsNullOrEmpty(SkillInputValue))
+            {
+                var skill = SkillsEnumerable.Last();
+                if (SkillsEnumerable is List<HardSkill> hardSkillsList)
+                {
+                    await skillClient.DeleteSkillAsync(skill.Id, "HardSkill");
+                    hardSkillsList.Remove(skill as HardSkill);
+                }
+                else if (SkillsEnumerable is List<SoftSkill> softSkillsList)
+                {
+                    await skillClient.DeleteSkillAsync(skill.Id, "SoftSkill");
+                    softSkillsList.Remove(skill as SoftSkill);
+                }
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message.ToString());
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to delete skill (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+    private async Task DeleteSkill(Skill skill)
+    {
+        try
+        {
+            if (SkillsEnumerable is List<HardSkill> hardSkillsList)
+            {
+                await skillClient.DeleteSkillAsync(skill.Id, "HardSkill");
+                hardSkillsList.Remove(skill as HardSkill);
+            }
+            else if (SkillsEnumerable is List<SoftSkill> softSkillsList)
+            {
+                await skillClient.DeleteSkillAsync(skill.Id, "SoftSkill");
+                softSkillsList.Remove(skill as SoftSkill);
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex.Message.ToString());
+            this.ToastService.ShowToast(new Services.ToastOption()
+                {
+                    Title = "Failed to delete skill (￣_￣|||)",
+                    Content = ex.Message
+                });
+        }
+    }
+
+    public async Task ResetSkillsInput()
+    {
+        SkillInputValue = "";
+        await Task.Yield();
+        StateHasChanged();
+
+        await JSRuntime.InvokeVoidAsync("resetSkillsInput", this.GetHashCode());
+    }
+
+    private async Task skillInputHandler(ChangeEventArgs e)
+    {
+        SkillInputValue = e.Value.ToString();
+        StateHasChanged();
+        var input = e.Value.ToString();
+        if (input != null && input.Contains(", "))
+        {
+            var newSkill = input.Split(",");
+
+            if (SkillsEnumerable is List<HardSkill> hardSkillsList)
+            {
+                hardSkillsList.Add(new HardSkill() { Name = newSkill[0] });
+            }
+            else if (SkillsEnumerable is List<SoftSkill> softSkillsList)
+            {
+                softSkillsList.Add(new SoftSkill() { Name = newSkill[0] });
+            }
+
+            await ResetSkillsInput();
+        }
+    }
+}
