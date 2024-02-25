@@ -127,13 +127,10 @@ h6 {
 }
 
 a:hover {
-  opacity: 0.8;
+  opacity: 0.8 !important;
 }
 a:active {
-  opacity: 0.4;
-}
-a {
-  color: #216aae;
+  opacity: 0.4 !important;
 }
 
 input {
@@ -238,7 +235,7 @@ textarea,
 
 a,
 .btn-link {
-  color: var(--accent);
+  color: var(--accent) !important;
 }
 
 .btn-primary {
