@@ -48,10 +48,6 @@
   --on-bg-lightest: #201e1f60;
 }
 
-* {
-  word-break: break-all;
-}
-
 html,
 body {
   font-family: 'SF Pro Text', sans-serif;

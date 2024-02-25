@@ -17,13 +17,14 @@
             if (IsSignedIn)
             {
                 <div id="profil-text" onload="setProfileBodyPlainText(@Body)" contenteditable="true"
-                    class='min-w-full overflow-hidden admin-content min-h-1 outline-1 outline'>
+                    class='min-w-full overflow-hidden break-words admin-content min-h-1 outline-1 outline'>
                     @* @(string.IsNullOrEmpty(Body) ? "" : Body.ToString()) *@
                 </div>
             }
             else if (!string.IsNullOrWhiteSpace(Body.ToString()))
             {
-                <div onload="setProfileBody(@Body)" id="profil-text" class='min-w-full overflow-hidden min-h-1'></div>
+                <div onload="setProfileBody(@Body)" id="profil-text" class='min-w-full overflow-hidden break-words min-h-1'>
+                </div>
             }
         }
 
