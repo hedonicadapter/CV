@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CVContext))]
-    [Migration("20240222195141_skills2")]
-    partial class skills2
+    [Migration("20240607171356_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,34 @@ namespace DataAccess.Migrations
                     b.ToTable("Experiences");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Experience")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResumeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResumeId");
+
+                    b.ToTable("HardSkills");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -253,7 +281,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Resumes");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Skill", b =>
+            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -271,19 +299,14 @@ namespace DataAccess.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ResumeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ResumeId1")
+                    b.Property<int>("ResumeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ResumeId");
 
-                    b.HasIndex("ResumeId1");
-
-                    b.ToTable("Skills");
+                    b.ToTable("SoftSkills");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -445,6 +468,17 @@ namespace DataAccess.Migrations
                     b.Navigation("Resume");
                 });
 
+            modelBuilder.Entity("DataAccess.Models.HardSkill", b =>
+                {
+                    b.HasOne("DataAccess.Models.Resume", "Resume")
+                        .WithMany("HardSkills")
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
+                });
+
             modelBuilder.Entity("DataAccess.Models.Project", b =>
                 {
                     b.HasOne("DataAccess.Models.Resume", "Resume")
@@ -456,15 +490,15 @@ namespace DataAccess.Migrations
                     b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Skill", b =>
+            modelBuilder.Entity("DataAccess.Models.SoftSkill", b =>
                 {
-                    b.HasOne("DataAccess.Models.Resume", null)
-                        .WithMany("HardSkills")
-                        .HasForeignKey("ResumeId");
-
-                    b.HasOne("DataAccess.Models.Resume", null)
+                    b.HasOne("DataAccess.Models.Resume", "Resume")
                         .WithMany("SoftSkills")
-                        .HasForeignKey("ResumeId1");
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

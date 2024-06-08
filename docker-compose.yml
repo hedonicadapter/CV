@@ -1,0 +1,30 @@
+﻿services:  
+  sql_server:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "Samba12345!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - backend
+  cv:
+    image: cv
+    depends_on:
+      - sql_server
+    networks:
+      - backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - SQL_DB_CONNECTION=${SQL_DB_CONNECTION}
+      - API_URL=${API_URL}
+      - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+
+networks:
+  backend:

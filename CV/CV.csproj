@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -49,4 +50,8 @@
       <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml" />
     </ItemGroup>
 
-</Project>
+  <!-- <ItemGroup> -->
+  <!--   <Content Include="wwwroot\**" CopyToPublishDirectory="PreserveNewest"/> -->
+  <!-- </ItemGroup> -->
+  </Project>
+

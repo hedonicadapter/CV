@@ -63,9 +63,7 @@ namespace DataAccess.Migrations
                     GitHub = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LinkedIn = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Portfolio = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Profile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SoftSkills = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HardSkills = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Profile = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -230,6 +228,28 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HardSkills",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ResumeId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: true),
+                    Experience = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HardSkills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HardSkills_Resumes_ResumeId",
+                        column: x => x.ResumeId,
+                        principalTable: "Resumes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -250,6 +270,28 @@ namespace DataAccess.Migrations
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Projects_Resumes_ResumeId",
+                        column: x => x.ResumeId,
+                        principalTable: "Resumes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SoftSkills",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ResumeId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: true),
+                    Experience = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SoftSkills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SoftSkills_Resumes_ResumeId",
                         column: x => x.ResumeId,
                         principalTable: "Resumes",
                         principalColumn: "Id",
@@ -306,8 +348,18 @@ namespace DataAccess.Migrations
                 column: "ResumeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HardSkills_ResumeId",
+                table: "HardSkills",
+                column: "ResumeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Projects_ResumeId",
                 table: "Projects",
+                column: "ResumeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SoftSkills_ResumeId",
+                table: "SoftSkills",
                 column: "ResumeId");
         }
 
@@ -336,7 +388,13 @@ namespace DataAccess.Migrations
                 name: "Experiences");
 
             migrationBuilder.DropTable(
+                name: "HardSkills");
+
+            migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "SoftSkills");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

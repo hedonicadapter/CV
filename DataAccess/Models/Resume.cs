@@ -26,20 +26,17 @@ namespace DataAccess.Models
         public string? LinkedIn { get; set; }
         public string? Portfolio { get; set; }
 
-
         [Required(ErrorMessage = "Do a lil self summary")]
         public string Profile { get; set; } = "";
 
-        [ValidateComplexType]
         public List<Education>? Educations { get; set; }
-        [ValidateComplexType]
+
         public List<Project>? Projects { get; set; }
-        [ValidateComplexType]
+
         public List<Experience>? Experiences { get; set; }
-        [ValidateComplexType]
+
         public List<SoftSkill>? SoftSkills { get; set; }
 
-        [ValidateComplexType]
         public List<HardSkill>? HardSkills { get; set; }
 
         public Resume()
@@ -50,6 +47,5 @@ namespace DataAccess.Models
             SoftSkills = new List<SoftSkill>();
             HardSkills = new List<HardSkill>();
         }
-
     }
 }

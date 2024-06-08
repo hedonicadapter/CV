@@ -7,7 +7,4 @@ using Microsoft.AspNetCore.Identity;
 namespace DataAccess.Models;
 
 // Add profile data for application users by adding properties to the CVUser class
-public class CVUser : IdentityUser
-{
-}
-
+public class CVUser : IdentityUser { }

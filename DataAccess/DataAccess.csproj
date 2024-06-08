@@ -21,11 +21,11 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation">
-        <HintPath>C:\Users\Sad Hentai\.nuget\packages\microsoft.aspnetcore.components.dataannotations.validation\3.2.0-rc1.20223.4\lib\netstandard2.1\Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll</HintPath>
       </Reference>
     </ItemGroup>
 
